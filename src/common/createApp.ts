@@ -4,7 +4,7 @@ import express, { Application } from 'express';
 import helmet from 'helmet';
 import morganBody from 'morgan-body';
 import * as controllers from '../api/v1/controllers';
-import { config } from '../configs/core/config';
+import { config, validateEnvVarsConfig } from '../configs/core/config';
 
 // Create server and apply configuration
 export default function createApp() {
@@ -17,6 +17,7 @@ export default function createApp() {
     if (config.bodyParser.settings.urlencoded && config.bodyParser.settings.urlencoded.enabled)
       app.use(bodyParser.urlencoded(config.bodyParser.settings.urlencoded.settings));
   }
+  validateEnvVarsConfig();
   app.use(cookieParser());
 
   // hook morganBody to express app

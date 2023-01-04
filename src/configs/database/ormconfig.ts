@@ -4,7 +4,7 @@ import { EnvService } from './env.service';
 
 const config = new EnvService().read();
 
-export const typeOrmConfig = new DataSource({
+export const dataSource = new DataSource({
   type: config.DB_TYPE,
   host: config.DB_HOST,
   port: config.DB_PORT,
@@ -13,5 +13,5 @@ export const typeOrmConfig = new DataSource({
   database: config.DB_NAME,
   synchronize: process.env.NODE_ENV === environments.DEVELOPMENT,
   logging: false,
-  entities: ['dist/src/entities/*{.ts,.js}'],
+  entities: [process.cwd() + '/dist/entity/*{.js,.ts}'],
 });
