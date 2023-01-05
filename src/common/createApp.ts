@@ -3,8 +3,10 @@ import cookieParser from 'cookie-parser';
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import morganBody from 'morgan-body';
+import passport from 'passport';
 import * as controllers from '../api/v1/controllers';
 import { config, validateEnvVarsConfig } from '../configs/core/config';
+import { applyPassportStrategy } from '../utils/passport';
 
 // Create server and apply configuration
 export default function createApp() {
@@ -18,6 +20,7 @@ export default function createApp() {
       app.use(bodyParser.urlencoded(config.bodyParser.settings.urlencoded.settings));
   }
   validateEnvVarsConfig();
+  applyPassportStrategy(passport);
   app.use(cookieParser());
 
   // hook morganBody to express app

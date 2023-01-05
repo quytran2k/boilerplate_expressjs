@@ -13,5 +13,5 @@ export const dataSource = new DataSource({
   database: config.DB_NAME,
   synchronize: process.env.NODE_ENV === environments.DEVELOPMENT,
   logging: false,
-  entities: [process.cwd() + '/dist/entity/*{.js,.ts}'],
+  entities: [process.cwd() + '/dist/entities/*{.js,.ts}'],
 });

@@ -27,6 +27,11 @@ export const config = {
       'Access-Control-Allow-Methods': '*',
     },
   },
+
+  passport: {
+    secret: '<Add_Your_Own_Secret_Key>',
+    expiresIn: 10000,
+  },
 };
 
 export const validateEnvVarsConfig = () => {
