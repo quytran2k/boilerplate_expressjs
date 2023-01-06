@@ -1,4 +1,5 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import { ApiError } from '../../../utils/ApiError';
 import { comparePassword, hashPassword } from '../../../utils/encryption';
 import { handleExceptionResponse } from '../../../utils/system';
@@ -36,7 +37,8 @@ UserController.post('/log-in', async (req, res) => {
     const { email, password } = req.body;
     const getPasswords = await userService.getPassword(email);
     const response = await comparePassword(password, getPasswords || '');
-    res.json(response);
+    const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY || '', { expiresIn: 100000 });
+    res.json(token);
     console.log(response);
   } catch (err) {
     handleExceptionResponse(res, err);

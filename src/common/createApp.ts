@@ -21,6 +21,7 @@ export default function createApp() {
   }
   validateEnvVarsConfig();
   applyPassportStrategy(passport);
+
   app.use(cookieParser());
 
   // hook morganBody to express app

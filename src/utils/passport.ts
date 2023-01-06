@@ -16,7 +16,7 @@ export const applyPassportStrategy = (passport: PassportStatic) => {
         if (res) return done(undefined, user);
         return done(undefined, false, { message: 'Incorrect password.' });
       } catch (err) {
-        return done(err);
+        return done(err, false);
       }
     }),
   );

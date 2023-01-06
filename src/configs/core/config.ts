@@ -29,7 +29,7 @@ export const config = {
   },
 
   passport: {
-    secret: '<Add_Your_Own_Secret_Key>',
+    secret: process.env.JWT_SECRET_KEY,
     expiresIn: 10000,
   },
 };
