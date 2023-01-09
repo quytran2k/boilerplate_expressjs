@@ -15,12 +15,11 @@ export class UserService {
     const users = await userRepository.find();
     return users;
   }
-  async signUpUser(user: newUser) {
+  async newUser(user: newUser) {
     const users = await userRepository.save({
       name: user.name,
       email: user.email,
       password: user.password,
     });
-    console.log(users);
   }
 }

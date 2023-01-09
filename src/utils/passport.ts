@@ -2,7 +2,6 @@ import { PassportStatic } from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { userRepository } from '../api/v1/User/user.repository';
 import { config } from '../configs/core/config';
-import { comparePassword } from './encryption';
 
 export const applyPassportStrategy = (passport: PassportStatic) => {
   passport.use(
@@ -12,9 +11,10 @@ export const applyPassportStrategy = (passport: PassportStatic) => {
         if (!user) {
           return done(undefined, false, { message: `username ${user} not found.` });
         }
-        const res = await comparePassword(payload.password, user.password || '');
-        if (res) return done(undefined, user);
-        return done(undefined, false, { message: 'Incorrect password.' });
+        return done(null, {
+          email: payload.email,
+          userId: user.id,
+        });
       } catch (err) {
         return done(err, false);
       }

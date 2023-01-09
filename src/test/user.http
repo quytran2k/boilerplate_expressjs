@@ -1,0 +1,23 @@
+#Get all users
+GET http://localhost:3000/api/v1/users  HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyM2FzZEBnbWFpbC5jb20iLCJpYXQiOjE2NzMyNTgzMzcsImV4cCI6MTY3Mzg2MzEzN30.uuteMBHbGGwIXcKt674fCMiY2qozeO2pgsagJdp17s4
+
+###
+# Sign in
+POST http://localhost:3000/api/v1/users/signup HTTP/1.1
+content-type: application/json
+
+{
+    "email": "123asd@gmail.com",
+    "password": "03.12.202214:21"
+}
+###
+#Log in
+POST http://localhost:3000/api/v1/users/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "123asd@gmail.com",
+    "password": "03.12.202214:21"
+}

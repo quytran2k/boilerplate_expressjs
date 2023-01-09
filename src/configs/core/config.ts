@@ -29,8 +29,8 @@ export const config = {
   },
 
   passport: {
-    secret: process.env.JWT_SECRET_KEY,
-    expiresIn: 10000,
+    secret: process.env.ACCESS_TOKEN_JWT_SECRET,
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
   },
 };
 

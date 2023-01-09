@@ -3,6 +3,8 @@ export interface User {
   name: string;
   email: string;
   password: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export type newUser = Omit<User, 'id'>;

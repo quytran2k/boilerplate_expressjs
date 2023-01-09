@@ -1,17 +1,20 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { CustomBaseEntity } from './customBaseEntity.entity';
 
 @Entity()
 export class User extends CustomBaseEntity {
-  @PrimaryGeneratedColumn()
-  id?: number;
-
   @Column()
   name?: string;
 
-  @Column()
+  @Column({ unique: true })
   email?: string;
 
   @Column()
   password?: string;
+
+  @Column({ nullable: true })
+  accessToken?: string;
+
+  @Column({ nullable: true })
+  refreshToken?: string;
 }
