@@ -6,7 +6,7 @@ const jsonSuccess = (result = null) => {
   return { success: true, result };
 };
 
-const jsonError = (err: string) => {
+const jsonError = (err: unknown) => {
   return { success: false, err };
 };
 
@@ -19,7 +19,7 @@ const handleExceptionResponse = (res: Response, err: string | unknown) => {
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json(err.errors);
   }
-  return res.json(jsonError(err as string));
+  return res.json(jsonError(err));
 };
 
 export { errors, jsonSuccess, jsonError, handleExceptionResponse };

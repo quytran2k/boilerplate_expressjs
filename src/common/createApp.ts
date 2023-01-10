@@ -6,7 +6,7 @@ import morganBody from 'morgan-body';
 import passport from 'passport';
 import * as controllers from '../api/v1/controllers';
 import { config, validateEnvVarsConfig } from '../configs/core/config';
-import { applyPassportStrategy } from '../utils/passport';
+import { applyPassportStrategy } from '../middlewares/passport';
 
 // Create server and apply configuration
 export default function createApp() {
