@@ -1,23 +1,25 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { validate } from '../../../middlewares/validate';
 import { ApiError } from '../../../utils/ApiError';
 import { comparePassword, hashPassword } from '../../../utils/encryption';
 import { handleExceptionResponse } from '../../../utils/system';
+import { authValidation } from '../../../validations';
 import { AuthService } from './auth.service';
 const AuthController = express.Router();
 const controller = [AuthController];
 const prefix = 'auth';
 const authService = new AuthService();
 
-AuthController.post('/signup', async (req, res) => {
+AuthController.post('/signup', validate(authValidation.registerValidation), async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
     // valid username, password missing
     const generatePassword = await hashPassword(password);
 
     if (!generatePassword) throw new ApiError('Can not hash password', 'Hash password fail', 400);
 
-    await authService.newUser({ name: 'qt', email, password: generatePassword });
+    await authService.newUser({ name, email, password: generatePassword });
 
     res.json('success');
   } catch (err) {
@@ -25,7 +27,7 @@ AuthController.post('/signup', async (req, res) => {
   }
 });
 
-AuthController.post('/login', async (req, res) => {
+AuthController.post('/login', validate(authValidation.loginValidation), async (req, res) => {
   try {
     // valid username, password
     const { email, password } = req.body;
