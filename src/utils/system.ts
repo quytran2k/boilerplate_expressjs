@@ -7,7 +7,8 @@ const jsonSuccess = (result = null) => {
 };
 
 const jsonError = (err: unknown) => {
-  return { success: false, err };
+  if (err instanceof ApiError) return { success: false, errors: err.errors, statusCode: err.statusCode };
+  return { success: false, errors: err, statusCode: 500 };
 };
 
 /**
@@ -17,7 +18,8 @@ const jsonError = (err: unknown) => {
  */
 const handleExceptionResponse = (res: Response, err: string | unknown) => {
   if (err instanceof ApiError) {
-    return res.status(err.statusCode).json(err.errors);
+    res.statusMessage = err?.message;
+    return res.status(err.statusCode).json(jsonError(err));
   }
   return res.json(jsonError(err));
 };

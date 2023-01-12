@@ -2,7 +2,7 @@ import { BaseEntity, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGenerate
 
 @Entity({ synchronize: false })
 export class CustomBaseEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id?: number;
 
   @CreateDateColumn({ select: true })

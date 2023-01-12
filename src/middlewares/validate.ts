@@ -11,7 +11,9 @@ export const validate = (schema: unknown) => async (req: Request, res: Response,
     .validate(object);
 
   if (error) {
-    const errorMessage = error.details.map((details) => details.message).join(', ');
+    const errorMessage = error.details.map((details) => {
+      return { path: details.path, message: details.message };
+    });
     return next(new ApiError('error', errorMessage, 400));
   }
   Object.assign(req, value);

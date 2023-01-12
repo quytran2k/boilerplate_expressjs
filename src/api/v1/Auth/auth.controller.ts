@@ -2,9 +2,10 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { validate } from '../../../middlewares/validate';
 import { ApiError } from '../../../utils/ApiError';
-import { comparePassword, hashPassword } from '../../../utils/encryption';
+import { comparePassword } from '../../../utils/encryption';
 import { handleExceptionResponse } from '../../../utils/system';
 import { authValidation } from '../../../validations';
+import checkUserExist from '../utils/checkUserExist';
 import { AuthService } from './auth.service';
 const AuthController = express.Router();
 const controller = [AuthController];
@@ -14,14 +15,13 @@ const authService = new AuthService();
 AuthController.post('/signup', validate(authValidation.registerValidation), async (req, res) => {
   try {
     const { email, password, name } = req.body;
-    // valid username, password missing
-    const generatePassword = await hashPassword(password);
 
-    if (!generatePassword) throw new ApiError('Can not hash password', 'Hash password fail', 400);
+    const userExist = await checkUserExist({ email });
+    if (userExist) throw new ApiError('exist user', 'user exist', 400);
 
-    await authService.newUser({ name, email, password: generatePassword });
+    const newUser = await authService.signUpUser({ name, email, password });
 
-    res.json('success');
+    res.json(newUser);
   } catch (err) {
     handleExceptionResponse(res, err);
   }
@@ -29,11 +29,15 @@ AuthController.post('/signup', validate(authValidation.registerValidation), asyn
 
 AuthController.post('/login', validate(authValidation.loginValidation), async (req, res) => {
   try {
-    // valid username, password
     const { email, password } = req.body;
-    const getPasswords = await authService.getPassword(email);
-    const response = await comparePassword(password, getPasswords || '');
-    if (!response) throw new ApiError('Passwords do not match', 'Passwords do not match', 400);
+
+    const userExist = await checkUserExist({ email });
+    if (!userExist) throw new ApiError('Not found', `Don't found user with email: ${email}`, 404);
+
+    const getPassword = await authService.getPassword(email);
+    const checkPasswordValid = await comparePassword(password, getPassword || '');
+    if (!checkPasswordValid) throw new ApiError('Passwords do not match', 'Passwords do not match', 400);
+
     const accessToken = jwt.sign({ email }, process.env.ACCESS_TOKEN_JWT_SECRET || '', { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN });
     const refreshToken = jwt.sign({ email }, process.env.REFRESH_TOKEN_JWT_SECRET || '', { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN });
 
@@ -43,7 +47,8 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
       secure: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
-    res.json({ accessToken });
+
+    res.json({ accessToken, refreshToken });
   } catch (err) {
     handleExceptionResponse(res, err);
   }

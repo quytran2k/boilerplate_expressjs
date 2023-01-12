@@ -3,7 +3,7 @@ import { password } from './custom.validation';
 
 export const loginValidation = {
   body: Joi.object().keys({
-    email: Joi.string().required().email().messages({ 'string.email': 'email error' }),
+    email: Joi.string().required().email().messages({ 'string.email': 'Email is invalid' }),
     password: Joi.string().required().custom(password),
   }),
 };

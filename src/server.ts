@@ -21,7 +21,7 @@ app.use((err: { statusCode: number }, _req: Request, res: Response, next: NextFu
     }
     res.set('Content-Type', 'application/json');
     res.status(err.statusCode);
-    res.json(err);
+    res.json({ success: false, ...err });
   } else {
     next(err);
   }
