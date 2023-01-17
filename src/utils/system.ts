@@ -18,7 +18,7 @@ const jsonError = (err: unknown) => {
  */
 const handleExceptionResponse = (res: Response, err: string | unknown) => {
   if (err instanceof ApiError) {
-    res.statusMessage = err?.message;
+    if (err.message) res.statusMessage = err?.message;
     return res.status(err.statusCode).json(jsonError(err));
   }
   return res.json(jsonError(err));

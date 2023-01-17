@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { CustomBaseEntity } from './customBaseEntity.entity';
+import { UserToken } from './UserToken.entity';
 
 @Entity()
 export class User extends CustomBaseEntity {
@@ -12,9 +13,6 @@ export class User extends CustomBaseEntity {
   @Column()
   password?: string;
 
-  @Column({ nullable: true })
-  accessToken?: string;
-
-  @Column({ nullable: true })
-  refreshToken?: string;
+  @OneToOne(() => UserToken, (userToken) => userToken.user)
+  userToken?: UserToken;
 }

@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "start": "node dist/server.js",
-    "build": "npx tsc -p .",
+    "build": "rm -rf dist && npx tsc -p .",
     "dev": "nodemon --watch src -e ts --exec npm run dev:start",
     "dev:start": "set NODE_ENV=development && npm run build && npm run start",
     "lint": "npx eslint \"{src,apps,libs,test}/**/*.ts\"",

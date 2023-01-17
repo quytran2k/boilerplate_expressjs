@@ -48,6 +48,8 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
       maxAge: 24 * 60 * 60 * 1000,
     });
 
+    await authService.assignTokenUser(userExist.id, refreshToken);
+
     res.json({ accessToken, refreshToken });
   } catch (err) {
     handleExceptionResponse(res, err);
@@ -56,6 +58,7 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
 
 AuthController.post('/refresh', async (req, res) => {
   try {
+    console.log(req.get('authorization'));
     res.json('refreshToken');
   } catch (err) {
     handleExceptionResponse(res, err);
