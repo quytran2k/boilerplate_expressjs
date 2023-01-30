@@ -9,3 +9,7 @@ export interface User {
 
 export type newUser = Omit<User, 'id'>;
 export type updateUser = Partial<User>;
+
+export interface payloadUser {
+  email: string;
+}

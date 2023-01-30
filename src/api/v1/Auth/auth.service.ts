@@ -47,4 +47,20 @@ export class AuthService {
       throw new ApiError('', 'Can not assign token user', 400);
     }
   }
+
+  async findRefreshTokenUser(refreshToken: string) {
+    try {
+      const userTokenRepository = dataSource.getRepository(UserToken);
+      const refreshTokens = await userTokenRepository.findOne({
+        select: { refreshToken: true },
+        where: {
+          refreshToken,
+        },
+      });
+      if (!refreshTokens) throw new ApiError('', 'Dont have any refresh tokens');
+      return refreshTokens;
+    } catch (err) {
+      throw new ApiError('', 'Cant get refresh tokens');
+    }
+  }
 }

@@ -1,12 +1,13 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import { validate } from '../../../middlewares/validate';
 import { ApiError } from '../../../utils/ApiError';
 import { comparePassword } from '../../../utils/encryption';
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../../utils/jwt_service';
 import { handleExceptionResponse } from '../../../utils/system';
 import { authValidation } from '../../../validations';
 import checkUserExist from '../utils/checkUserExist';
 import { AuthService } from './auth.service';
+import { payloadUser } from './interface/user.interface';
 const AuthController = express.Router();
 const controller = [AuthController];
 const prefix = 'auth';
@@ -38,17 +39,17 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
     const checkPasswordValid = await comparePassword(password, getPassword || '');
     if (!checkPasswordValid) throw new ApiError('Passwords do not match', 'Passwords do not match', 400);
 
-    const accessToken = jwt.sign({ email }, process.env.ACCESS_TOKEN_JWT_SECRET || '', { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN });
-    const refreshToken = jwt.sign({ email }, process.env.REFRESH_TOKEN_JWT_SECRET || '', { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN });
+    const accessToken = await signAccessToken(email);
+    const refreshToken = await signRefreshToken(email);
 
     res.cookie('jwt', refreshToken, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'lax',
+      // secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    await authService.assignTokenUser(userExist.id, refreshToken);
+    await authService.assignTokenUser(userExist.id, refreshToken as string);
 
     res.json({ accessToken, refreshToken });
   } catch (err) {
@@ -58,8 +59,28 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
 
 AuthController.post('/refresh', async (req, res) => {
   try {
-    console.log(req.get('authorization'));
-    res.json('refreshToken');
+    const [scheme, token] = req.headers['authorization']?.split(' ') || [];
+    const refreshToken = req.cookies['jwt'];
+    const refreshTokenUser = await authService.findRefreshTokenUser(refreshToken);
+
+    if (refreshToken !== refreshTokenUser.refreshToken || !token) {
+      throw new ApiError('', 'Token is invalid');
+    }
+
+    const tokenDetail = await verifyRefreshToken(refreshToken);
+    const tokenUser = tokenDetail as payloadUser;
+    const accessToken = await signAccessToken(tokenUser.email);
+
+    res.json({ accessToken });
+  } catch (err) {
+    handleExceptionResponse(res, err);
+  }
+});
+
+AuthController.post('/logout', async (req, res) => {
+  try {
+    res.clearCookie('jwt');
+    res.json('Logged out');
   } catch (err) {
     handleExceptionResponse(res, err);
   }
