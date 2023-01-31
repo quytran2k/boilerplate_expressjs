@@ -59,11 +59,10 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
 
 AuthController.post('/refresh', async (req, res) => {
   try {
-    const [scheme, token] = req.headers['authorization']?.split(' ') || [];
     const refreshToken = req.cookies['jwt'];
     const refreshTokenUser = await authService.findRefreshTokenUser(refreshToken);
 
-    if (refreshToken !== refreshTokenUser.refreshToken || !token) {
+    if (refreshToken !== refreshTokenUser.refreshToken) {
       throw new ApiError('', 'Token is invalid');
     }
 
