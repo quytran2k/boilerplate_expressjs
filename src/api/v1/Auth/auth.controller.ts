@@ -45,7 +45,7 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
     res.cookie('jwt', refreshToken, {
       httpOnly: true,
       sameSite: 'lax',
-      // secure: true,
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -59,7 +59,8 @@ AuthController.post('/login', validate(authValidation.loginValidation), async (r
 
 AuthController.post('/refresh', async (req, res) => {
   try {
-    const refreshToken = req.cookies['jwt'];
+    const [schema, token] = req.headers['authorization']?.split(' ') || [];
+    const refreshToken = req.cookies['jwt'] || token;
     const refreshTokenUser = await authService.findRefreshTokenUser(refreshToken);
 
     if (refreshToken !== refreshTokenUser.refreshToken) {

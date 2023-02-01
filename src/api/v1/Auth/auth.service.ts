@@ -60,6 +60,7 @@ export class AuthService {
       if (!refreshTokens) throw new ApiError('', 'Dont have any refresh tokens');
       return refreshTokens;
     } catch (err) {
+      if (err instanceof ApiError) throw new ApiError(err.message, err.errors, err.statusCode);
       throw new ApiError('', 'Cant get refresh tokens');
     }
   }

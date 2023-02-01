@@ -14,10 +14,19 @@ content-type: application/json
 }
 ###
 #Log in
-POST http://localhost:3000/api/v1/users/login HTTP/1.1
+POST http://localhost:3000/api/v1/auth/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": "123asd@gmail.com",
-    "password": "03.12.202214:21"
+    "email": "123x2sd21@gmail.com",
+    "password": "1cxczxczxczxc23a"
+}
+###
+#Refresh
+POST http://localhost:3000/api/v1/auth/refresh HTTP/1.1
+content-type: application/json
+
+{
+    "email": "123x2sd21@gmail.com",
+    "password": "1cxczxczxczxc23a"
 }
